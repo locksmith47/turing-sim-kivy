@@ -1,0 +1,3 @@
+title=Turing Second Iter
+author=Lachlan
+orientation=landscape

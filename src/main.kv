@@ -1,0 +1,438 @@
+# File name: main.kv 
+#:kivy 1.7.0
+
+<BgLabel@Label>:
+    canvas.before: 
+        Color: 
+            rgb: .3, .3, .3
+        Rectangle: 
+            pos: self.pos 
+            size: self.size 
+
+<BgCheck@CheckBox>:
+    canvas.before: 
+        Color: 
+            rgb: .3, .3, .3
+        Rectangle: 
+            pos: self.pos 
+            size: self.size 
+
+<Main>:
+    bg_color: (0,0,0,1)
+    canvas.before:
+        Color:
+            rgba: self.bg_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    RelativeLayout:
+        id: _main_space
+        pos_hint: {'y':.08}
+        size_hint_y: .92
+        size_hint_x: 1
+        on_touch_down: root.close_menus(*args)
+
+        MachineScreen:
+            id: _machinescreen
+
+    TouchHandler:
+        id: _touch_handler
+
+    SpeedSlider:
+        id: _slider
+        size_hint_x: None
+        size_hint_y: .5
+        width: _speed_btn.width
+        x: _speed_btn.x
+        y: _speed_btn.height + 5
+        orientation: 'vertical'
+
+    AnchorLayout:
+        anchor_x: 'left'
+        anchor_y: 'bottom'
+        
+        MenuLayoutStack:
+
+            rows: 1
+            size_hint_y: .08
+
+            Button:
+                id: _run_machine_btn
+                text: 'Run Mode'
+                size_hint_x: .075+.075/2
+                on_release: root.run_menu_change_mode(*args)
+            Button:
+                x: 1
+                id: _speed_btn
+                text: 'Speed'
+                size_hint_x: .074+.075/2
+                on_release: root.toggle_speed_slider(*args)
+            TuringTape:
+                id: _tape_gui
+                size_hint_x: .55
+            Button:
+                text: 'Edit Tape'
+                id: _edit_tape_btn
+                size_hint_x: .075+.075/2
+                on_release: root.toggle_tape_menu(*args)
+                text_size: (self.size[0], None)
+                halign: 'center'
+            Button:
+                text: 'Reset Head'
+                id: _reset_tape_btn
+                size_hint_x: .075+.075/2
+                on_release: root.run_menu_reset_tape_head(*args)
+                text_size: (self.size[0], None)
+                halign: 'center'
+
+    Button:
+        id: _main_menu_btn
+
+        pos_hint: {'top':1, 'x':0}
+        size_hint: .1, .075
+
+        text: 'Menu'
+        on_release: root.toggle_main_menu(*args)
+
+    BoxLayout:
+        size_hint_x: .15
+        size_hint_y: .075
+        orientation: "horizontal"
+        x: root.width-self.width
+        y: root.height-self.height
+
+        id: _undo_redo_layout
+
+        canvas.before: 
+            Color: 
+                rgba: .6, .6, .6, 1 
+            Rectangle: 
+                pos: self.pos 
+                size: self.size 
+        Button:
+            id: _undo_btn
+            on_release: root.undo_action(self)
+            text: 'Undo'
+        Button:
+            id: _redo_btn
+            on_release: root.redo_action(self)
+            text: 'Redo'
+
+    MenuLayoutStack:
+        id: _main_menu
+
+        cols: 1
+        padding: min(root.width, root.height) * 0.01, min(root.width, root.height) * 0.01
+        spacing: min(root.width, root.height) * 0.005
+        size_hint_x: .3
+        size_hint_y: .45
+
+        y: _main_menu_btn.y - self.height
+
+        Button:
+            text: 'New'
+            on_release: root.main_menu_new_tm(*args)
+            size_hint: 1, .19
+        Button:
+            text: 'Save'
+            on_release: root.main_menu_toggle_save(*args)
+            size_hint: 1, .19
+        Button:
+            text: 'Load'
+            on_release: root.main_menu_toggle_load(*args)
+            size_hint: 1, .19
+        Button:
+            text: 'Alphabet'
+            disabled: True
+            size_hint: 1, .19
+        Button:
+            text: 'Share Machine'
+            on_release: root.main_menu_share_machine(*args)
+            size_hint: 1, .19
+
+    MenuLayoutStack:
+        id: _state_menu
+
+        cols: 2
+        padding: min(root.width, root.height) * 0.01, min(root.width, root.height) * 0.01
+        spacing: min(root.width, root.height) * 0.005
+        size_hint_x: .3
+        size_hint_y: .25
+
+        BgLabel:
+            text: 'Name'
+            size_hint: .5, .24
+        Button:
+            id: _state_name_btn
+            size_hint: .5, .24
+            on_release: root.state_menu_name_diag(*args)
+        BgLabel:
+            text: 'Start'
+            size_hint: .5, .24
+        BgCheck:
+            id: _state_start_cb
+            size_hint: .5, .24
+        BgLabel:
+            text: 'Final'
+            size_hint: .5, .24
+        BgCheck:
+            id: _state_final_cb
+            size_hint: .5, .24
+        Button:
+            id: _state_delete_btn
+            text: 'Delete'
+            on_release: root.state_menu_delete(*args)
+            size_hint: 1, .24
+
+    MenuLayoutStack:
+        id: _transition_menu
+
+        cols: 2
+        padding: min(root.width, root.height) * 0.01, min(root.width, root.height) * 0.01
+        spacing: min(root.width, root.height) * 0.005
+        size_hint_x: .3
+        size_hint_y: .25
+
+        BgLabel:
+            text: 'Direction'
+            size_hint: .5, .24
+        Button:
+            text: 'Left'
+            id: _trans_left_btn
+            on_release: root.trans_menu_left(*args)
+            size_hint: .25, .24
+        Button:
+            text: 'Right'
+            id: _trans_right_btn
+            on_release: root.trans_menu_right(*args)
+            size_hint: .25, .24  
+        BgLabel:
+            text: 'Read'
+            size_hint: .5, .24
+        BoundedInput:
+            id: _trans_read_tb
+            multiline: False
+            max_chars: 1
+            padding_y: ( self.height - self.line_height ) / 2
+            cursor_color: (.2,.2,.2,1)
+            size_hint: .5, .24
+            on_text: root.trans_menu_read_txt(*args)
+        BgLabel:
+            text: 'Write'
+            size_hint: .5, .24
+        BoundedInput:
+            id: _trans_write_tb
+            multiline: False
+            max_chars: 1
+            padding_y: ( self.height - self.line_height ) / 2
+            cursor_color: (.2,.2,.2,1)
+            size_hint: .5, .24
+            on_text: root.trans_menu_write_txt(*args)
+        Button:
+            id: _trans_delete_btn
+            text: 'Delete'
+            on_release: root.trans_menu_delete(*args)
+            size_hint: 1, .24
+
+    MenuLayoutStack:
+        id: _halt_notifier
+        
+        size_hint_x: .45
+        size_hint_y: .3
+        pos_hint: {'center_x':.5, 'center_y':.6}
+        padding: min(root.width, root.height) * 0.01, min(root.width, root.height) * 0.01
+        spacing: min(root.width, root.height) * 0.005
+
+        BgLabel:
+            text: 'Machine Halted'
+            size_hint: 1, .29
+
+        BgLabel:
+            text: 'Machine Halted'
+            id: _halt_reason_label
+            size_hint: 1, .39
+            text_size: (self.size[0], None)
+            halign: 'center'
+
+        Button:
+            text: 'Ok'
+            on_release: root.close_halt_notifier(*args)
+            size_hint: 1, .29
+
+    MenuLayoutStack:
+        id: _run_mode_menu
+        size_hint_x: .3
+        size_hint_y: .15
+        padding: min(root.width, root.height) * 0.01, min(root.width, root.height) * 0.01
+        spacing: min(root.width, root.height) * 0.005
+        x: root.width-self.width
+        y: root.height-self.height
+        SpeedSlider:
+            canvas.before:
+                Clear
+            id: _run_slider
+            max: 1000
+            size_hint_y: .5
+            orientation: 'horizontal'
+        Button:
+            id: _run_step_left
+            on_release: root.run_menu_step_back(*args)
+            size_hint_x: .248
+            size_hint_y: .5
+            text: '<'
+        Button:
+            id: _run_play_pause
+            on_release: root.run_menu_play_pause(*args)
+            size_hint_x: .498
+            size_hint_y: .5
+            text: 'Pause'
+        Button:
+            id: _run_step_right
+            on_release: root.run_menu_step_forward(*args)
+            size_hint_x: .248
+            size_hint_y: .5
+            text: '>'
+
+<MenuLayoutStack>:
+    canvas.before: 
+        Color: 
+            rgba: .6, .6, .6, .7 
+        Rectangle: 
+            pos: self.pos 
+            size: self.size 
+
+<ConfirmDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        padding: min(root.width, root.height) * 0.01, min(root.width, root.height) * 0.01
+        spacing: min(root.width, root.height) * 0.01
+        orientation: "vertical"
+
+        BgLabel:
+            text: "Are you sure you want to create a new machine?"
+            text_size: (self.size[0], None)
+            halign: 'center'
+
+        BoxLayout:
+            size_hint_y: .7
+            Button:
+                text: "Cancel"
+                on_release: root.func_cancel()
+
+            Button:
+                text: "Accept"
+                on_release: root.func_new_machine()
+
+<LoadDialog>:
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+        FileChooserListView:
+            id: filechooser
+            rootpath: root.file_root
+            path: root.save_path
+            filters: ['*.tm']
+        BoxLayout:
+            size_hint_y: .1
+            Button:
+                text: "Cancel"
+                on_release: root.func_cancel()
+
+            Button:
+                text: "Load"
+                on_release: root.func_load(filechooser.path, filechooser.selection)
+
+<SaveDialog>:
+    text_input: text_input
+    BoxLayout:
+        size: root.size
+        pos: root.pos
+        orientation: "vertical"
+
+        StackLayout:
+            size_hint_y: .1
+            BgLabel:
+                text: 'File name:'
+                size_hint_x: .15
+            TextInput:
+                id: text_input
+                text: 'machine.tm'
+                padding_y: ( self.height - self.line_height ) / 2
+                size_hint_x: .85
+                multiline: False
+    
+        FileChooserListView:
+            id: filechooser
+            rootpath: root.file_root
+            path: root.save_path
+            filters: ['*.tm']
+            on_selection: text_input.text = self.selection and self.selection[0] or ''
+
+        BoxLayout:
+            size_hint_y: .1
+            Button:
+                text: "Cancel"
+                on_release: root.func_cancel()
+
+            Button:
+                text: "Save"
+                on_release: root.func_save(filechooser.path, text_input.text)
+
+<EditTapeDialog>:
+    MenuLayoutStack:
+        id: _tape_menu
+        pos: root.pos
+
+        BgLabel:
+            text: 'Enter Tape'
+            size_hint: .2, 1
+
+        BoundedInput:
+            id: _tape_edit_tb
+            multiline: False
+            max_chars: -1
+            padding_y: ( self.height - self.line_height ) / 2
+            cursor_color: (.2,.2,.2,1)
+            size_hint: .6, 1
+
+        Button:
+            text: 'Accept'
+            on_release: root.func_change_tape(_tape_edit_tb.text)
+            size_hint: .10, 1
+
+        Button:
+            text: 'Cancel'
+            on_release: root.func_cancel()
+            size_hint: .099, 1
+
+<StateNameDialog>:
+    MenuLayoutStack:
+        id: _tape_menu
+        pos: root.pos
+
+        BgLabel:
+            text: 'Enter New Name'
+            size_hint: .25, 1
+            text_size: (self.size[0], None)
+            halign: 'center'
+
+        BoundedInput:
+            id: _name_edit_tb
+            multiline: False
+            max_chars: 7
+            padding_y: ( self.height - self.line_height ) / 2
+            cursor_color: (.2,.2,.2,1)
+            size_hint: .35, 1
+
+        Button:
+            text: 'Accept'
+            on_release: root.func_change_name(_name_edit_tb.text)
+            size_hint: .2, 1
+
+        Button:
+            text: 'Cancel'
+            on_release: root.func_cancel()
+            size_hint: .199, 1
